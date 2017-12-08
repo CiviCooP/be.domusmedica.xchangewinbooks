@@ -1,19 +1,13 @@
 # be.domusmedica.xchangewinbooks
 
-![Screenshot](/images/screenshot.png)
-
-(*FIXME: In one or two paragraphs, describe what the extension does and why one would download it. *)
+The extension is specific to Domus Medica and used the batchQuery and batchItems hook to customize the format of the Accounting Batch Export to CSV.
 
 The extension is licensed under [AGPL-3.0](LICENSE.txt).
 
 ## Requirements
 
 * PHP v5.4+
-* CiviCRM (*FIXME: Version number*)
-
-## Installation (Web UI)
-
-This extension has not yet been published for installation via the web UI.
+* CiviCRM 4.7
 
 ## Installation (CLI, Zip)
 
@@ -35,10 +29,3 @@ git clone https://github.com/FIXME/be.domusmedica.xchangewinbooks.git
 cv en xchangewinbooks
 ```
 
-## Usage
-
-(* FIXME: Where would a new user navigate to get started? What changes would they see? *)
-
-## Known Issues
-
-(* FIXME *)
