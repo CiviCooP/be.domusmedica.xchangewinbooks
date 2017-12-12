@@ -1,7 +1,7 @@
 {
-  "tussen_haakjes":"1",
-  "scheidingsteken":",",
-  "achter_de_komma":"3",
-  "ana_code_member_verkoop":"LEDEN000",
-  "ana_code_member_credit":"NAV00008"
+  "Velden tussen quotes":"1",
+  "Scheidingsteken":",",
+  "Cijfers achter de komma":"3",
+  "Analytische code Factuur":"LEDEN000",
+  "Analystische code Creditnota":"NAV00008"
 }

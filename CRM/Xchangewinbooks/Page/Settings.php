@@ -10,58 +10,72 @@ class CRM_Xchangewinbooks_Page_Settings extends CRM_Core_Page {
    */
   function run() {
     $settings = new CRM_Xchangewinbooks_Settings();
-    CRM_Core_Error::debug('settings', $settings);
-    exit();
-
     $this->setPageConfiguration();
-    $this->assign('rules', $this->getRules());
+    $this->assign('generic', $this->setOneLine('gen', $settings->getGeneric()));
+    $this->assign('factuur_grootboek', $this->setGrootboek('fgn',$settings->getFactuurGrootboek()));
+    $this->assign('credit_grootboek', $this->setGrootboek('cgn', $settings->getCreditGrootboek()));
+    $this->assign('factuur_analytisch', $this->setOneLine('fan', $settings->getFactuurAnalytisch()));
+    $this->assign('credit_analytisch', $this->setOneLine('can', $settings->getCreditAnalytisch()));
+    $this->assign('done_url', '<a class="button done" title="Done" href="' . CRM_Core_Session::singleton()->readUserContext() . '"><span>'.ts("Done").'</span></a>');
+
     parent::run();
   }
 
   /**
-   * Function to get the data
+   * Method to create page array with grootboek niveau settings
    *
-   * @return array $rules
-   * @access protected
+   * @param string $type
+   * @param array $data
+   * @return array
    */
-  protected function getRules() {
-    $rules = CRM_Civirules_BAO_Rule::getValues(array());
-    foreach ($rules as $ruleId => $rule) {
-      $rules[$ruleId]['actions'] = $this->setRowActions($rule);
-      if (isset($rule['trigger_id']) && !empty($rule['trigger_id'])) {
-        $rules[$ruleId]['trigger_label'] = CRM_Civirules_BAO_Trigger::getTriggerLabelWithId($rule['trigger_id']);
+  private function setGrootboek($type, $data) {
+    $lines = array();
+    foreach ($data as $key => $values) {
+      if (empty($values['eerste'])) {
+        $lines['eerste'][] = $key . ": <strong>(leeg)</strong>";
+      } else {
+        $lines['eerste'][] = $key . ": <strong>" . $values['eerste']."</strong>";
       }
-      $rules[$ruleId]['created_contact_name'] = CRM_Civirules_Utils::getContactName($rule['created_user_id']);
-      $rules[$ruleId]['is_active'] = CRM_Civirules_Utils::formatIsActive($rule['is_active']);
+      if (empty($values['tweede'])) {
+        $lines['tweede'][] = $key . ": <strong>(leeg)</strong>";
+      } else {
+        $lines['tweede'][] = $key . ": <strong>" . $values['tweede']."</strong>";
+      }
+      if (empty($values['derde'])) {
+        $lines['derde'][] = $key . ": <strong>(leeg)</strong>";
+      } else {
+        $lines['derde'][] = $key . ": <strong>" . $values['derde']."</strong>";
+      }
     }
-    return $rules;
+    $editUrl = CRM_Utils_System::url('civicrm/domusmedica/xchangewinbooks/form/settings',
+      'reset=1&action=update&type='.$type, true);
+    $result = array(
+      'eerste' => implode(" / ", $lines['eerste']),
+      'tweede' => implode(" / ", $lines['tweede']),
+      'derde' => implode(" / ", $lines['derde']),
+      'edit' => '<a class="action-item" title="Edit" href="' . $editUrl . '">' . ts('Edit') . '</a>',
+    );
+    return $result;
   }
 
   /**
-   * Function to set the row action urls and links for each row
+   * Method to create page array with one line settings
    *
-   * @param array $rule
-   * @return array $actions
-   * @access protected
+   * @param string $type
+   * @param array $data
+   * @return array
    */
-  protected function setRowActions($rule) {
-    $rowActions = array();
-    $updateUrl = CRM_Utils_System::url('civicrm/civirule/form/rule', 'reset=1&action=update&id='.
-      $rule['id']);
-    $deleteUrl = CRM_Utils_System::url('civicrm/civirule/form/ruledelete', 'reset=1&action=delete&id='.
-      $rule['id']);
-    $disableUrl = CRM_Utils_System::url('civicrm/civirule/form/rule', 'reset=1&action=disable&id='.
-      $rule['id']);
-    $enableUrl = CRM_Utils_System::url('civicrm/civirule/form/rule', 'reset=1&action=enable&id='.
-      $rule['id']);
-    $rowActions[] = '<a class="action-item" title="Update" href="'.$updateUrl.'">'.ts('Edit').'</a>';
-    if ($rule['is_active'] == 1) {
-      $rowActions[] = '<a class="action-item" title="Disable" href="'.$disableUrl.'">'.ts('Disable').'</a>';
-    } else {
-      $rowActions[] = '<a class="action-item" title="Enable" href="'.$enableUrl.'">'.ts('Enable').'</a>';
+  private function setOneLine($type, $data) {
+    $lines = array();
+    foreach ($data as $key => $value) {
+      $lines[] = $key . ": <strong>" . $value."</strong>";
     }
-    $rowActions[] = '<a class="action-item" title="Delete" href="'.$deleteUrl.'">'.ts('Delete').'</a>';
-    return $rowActions;
+    $editUrl = CRM_Utils_System::url('civicrm/domusmedica/xchangewinbooks/form/settings',
+      'reset=1&action=update&type='.$type, true);
+    return array(
+      'value' => implode(" / ", $lines),
+      'edit' => '<a class="action-item" title="Edit" href="' . $editUrl . '">' . ts('Edit') . '</a>',
+    );
   }
 
   /**
@@ -70,17 +84,7 @@ class CRM_Xchangewinbooks_Page_Settings extends CRM_Core_Page {
    * @access protected
    */
   protected function setPageConfiguration() {
-    $domainVersion = civicrm_api3('Domain', 'getvalue', array('current_domain' => "TRUE", 'return' => 'version'));
-    $domainVersion = round((float) $domainVersion, 2);
-    if ($domainVersion < 4.6) {
-      $this->assign('earlier_than_46', 1);
-    } else {
-      $this->assign('earlier_than_46', 0);
-    }
-    CRM_Utils_System::setTitle(ts('CiviRules'));
-    $this->assign('add_url', CRM_Utils_System::url('civicrm/civirule/form/rule',
-      'reset=1&action=add', true));
-    $session = CRM_Core_Session::singleton();
-    $session->pushUserContext(CRM_Utils_System::url('civicrm/civirules/page/rule', 'reset=1', true));
+    CRM_Utils_System::setTitle(ts('Export to Winbooks Settings Domus Medica'));
+    $this->assign('help_text', ts("Hieronder staan de instellingen die gebruikt worden om facturen, creditnota's en contacten te exporteren naar Winbooks"));
   }
 }

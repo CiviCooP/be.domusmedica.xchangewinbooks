@@ -57,7 +57,7 @@
   "Tweede factuurdatum":{
     "eerste":"column:invoice_date",
     "tweede":"column:invoice_date",
-    "eerste":"column:invoice_date"
+    "derde":"column:invoice_date"
   },
   "Vervaldatum":{
     "eerste":"column:due_date",

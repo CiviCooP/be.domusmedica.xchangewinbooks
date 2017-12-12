@@ -26,6 +26,10 @@ class CRM_Xchangewinbooks_Form_Settings extends CRM_Core_Form {
     parent::buildQuickForm();
   }
 
+  public function preProcess() {
+    CRM_Core_Session::singleton()->pushUserContext(CRM_Utils_System::url('civicrm/domusmedica/xchangewinbooks/page/settings', 'reset=1', true));
+  }
+
   public function postProcess() {
     $values = $this->exportValues();
     $options = $this->getColorOptions();

@@ -11,8 +11,8 @@
 class CRM_Xchangewinbooks_Settings {
   private $_settingsPath = NULL;
   private $_generic = array();
-  private $_verkoopGrootboek = array();
-  private $_verkoopAnalytisch = array();
+  private $_factuurGrootboek = array();
+  private $_factuurAnalytisch = array();
   private $_creditGrootboek = array();
   private $_creditAnalytisch = array();
 
@@ -45,8 +45,8 @@ class CRM_Xchangewinbooks_Settings {
    *
    * @return array
    */
-  public function getVerkoopGrootboek() {
-    return $this->_verkoopGrootboek;
+  public function getFactuurGrootboek() {
+    return $this->_factuurGrootboek;
   }
 
   /**
@@ -54,8 +54,8 @@ class CRM_Xchangewinbooks_Settings {
    *
    * @return array
    */
-  public function getVerkoopAnalytisch() {
-    return $this->_verkoopAnalytisch;
+  public function getFactuurAnalytisch() {
+    return $this->_factuurAnalytisch;
   }
 
   /**
@@ -82,8 +82,8 @@ class CRM_Xchangewinbooks_Settings {
   private function setSettingsFromJson() {
     $settings = array(
       '_generic' => 'generic',
-      '_verkoopGrootboek' => 'pattern_verkoop_grootboek',
-      '_verkoopAnalytisch' => 'pattern_verkoop_analytisch',
+      '_factuurGrootboek' => 'pattern_factuur_grootboek',
+      '_factuurAnalytisch' => 'pattern_factuur_analytisch',
       '_creditGrootboek' => 'pattern_credit_grootboek',
       '_creditAnalytisch' => 'pattern_credit_analytisch',
     );
