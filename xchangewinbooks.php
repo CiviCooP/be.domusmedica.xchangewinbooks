@@ -11,6 +11,7 @@ use CRM_Xchangewinbooks_ExtensionUtil as E;
 function xchangewinbooks_civicrm_batchQuery(&$query) {
   CRM_Xchangewinbooks_Export::batchQuery($query);
 }
+
 /**
  * Implements hook_civicrm_batchItems().
  *

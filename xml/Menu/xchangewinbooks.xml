@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/domusmedica/xchangewinbooks/form/settings</path>
+    <page_callback>CRM_Xchangewinbooks_Form_Settings</page_callback>
+    <title>Settings</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/domusmedica/xchangewinbooks/page/settings</path>
+    <page_callback>CRM_Xchangewinbooks_Page_Settings</page_callback>
+    <title>Settings</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+</menu>
