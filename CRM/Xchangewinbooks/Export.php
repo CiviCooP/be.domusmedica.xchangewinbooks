@@ -42,11 +42,113 @@ WHERE a.batch_id = %1 AND a.entity_table = 'civicrm_financial_trxn' AND d.invoic
     $items = array();
     foreach ($results as $result) {
       $result['due_date'] = self::calculateDueDate($result['receive_date']);
-      $result['formatted_amount'] = number_format($result['total_amount'], 3, ',', '.');
-      $items[] = self::generateFirstLine($result);
-      $items[] = self::generateSecondLine($result);
-      $items[] = self::generateThirdLine($result);
+      // decide if this is a verkoopfactuur or a creditnota
+      if (!empty($result['creditnote_id'])) {
+        self::generateGrootboekLines('credit', $items, $result);
+        self::generateAnalytischLine('credit', $items, $result);
+      } else {
+        self::generateGrootboekLines('factuur', $items, $result);
+        self::generateAnalytischLine('factuur', $items, $result);
+      }
     }
+  }
+
+  /**
+   * Method to generate the grootboek lines
+   *
+   * @param $type
+   * @param $items
+   * @param $data
+   */
+  private static function generateGrootboeklines($type, &$items, $data) {
+    $settings = new CRM_Xchangewinbooks_Settings();
+    $data['formatted_amount'] = number_format($data['total_amount'], $settings->getDecimalPlaces() , ',', '.');
+    if ($type == 'credit') {
+      $pattern = $settings->getCreditGrootboek();
+    } else {
+      $pattern = $settings->getFactuurGrootboek();
+    }
+    $quotes = $settings->getQuotes();
+    $anaCredit = $settings->getAnalyticCodeCredit();
+    $anaFactuur = $settings->getAnalyticCodeFactuur();
+    $eerste = array();
+    $tweede = array();
+    $derde = array();
+    foreach ($pattern as $key => $values) {
+      $eerste[$key] = self::writeGrootboekValue($values['eerste'], $data, $quotes, $anaCredit, $anaFactuur);
+      $tweede[$key] = self::writeGrootboekValue($values['tweede'],  $data, $quotes, $anaCredit, $anaFactuur);
+      $derde[$key] = self::writeGrootboekValue($values['derde'],  $data, $quotes, $anaCredit, $anaFactuur);
+    }
+    $items[] = $eerste;
+    $items[] = $tweede;
+    $items[] = $derde;
+  }
+
+  /**
+   * Method to determine what the grootboek line value is
+   *
+   * @param $value
+   * @param array $data
+   * @param bool $quotes
+   * @param string $anaCredit
+   * @param string $anaFactuur
+   * @return string
+   */
+  private static function writeGrootboekValue($value, $data, $quotes, $anaCredit, $anaFactuur) {
+    if (empty($value)) {
+      $result = '';
+    } elseif (substr($value, 0, 7) == 'column:') {
+      $result = self::retrieveColumnValue($value, $data, $anaCredit, $anaFactuur);
+    } else {
+      $result = $value;
+    }
+    if ($quotes) {
+      return '"'.$result.'"';
+    } else {
+      return $result;
+    }
+  }
+
+  /**
+   * Method to retrieve the value from the data
+   *
+   * @param $value
+   * @param $data
+   * @param $anaCredit
+   * @param $anaFactuur
+   * @return false|string
+   */
+  private static function retrieveColumnValue($value, $data, $anaCredit, $anaFactuur) {
+    $result = '';
+    $parts = explode('column:', $value);
+    if (isset($parts[1])) {
+      switch ($parts[1]) {
+        case 'invoice_date':
+          $result = date('Ymd', strtotime($data['receive_date']));
+          break;
+        case 'total_amount':
+          $result = $data['formatted_amount'];
+          break;
+        case 'total_amount:negative':
+          $result = '-'.$data['formatted_amount'];
+          break;
+        case 'analytic_code_factuur':
+          $result = $anaFactuur;
+          break;
+        case 'analytic_code_credit':
+          $result = $anaCredit;
+          break;
+        default:
+          if (isset($data[$parts[1]])) {
+            $result = $data[$parts[1]];
+          }
+          break;
+      }
+    }
+    return $result;
+  }
+  private static function generateAnalytischLine($type, &$items) {
+
   }
 
   /**
@@ -79,154 +181,6 @@ WHERE a.batch_id = %1 AND a.entity_table = 'civicrm_financial_trxn' AND d.invoic
     catch (CiviCRM_API3_Exception $ex) {
     }
     return $dueDate->format('Y-m-d H:i:s');
-  }
-
-
-  /**
-   * Method to generate first line
-   *
-   * @param $result
-   * @return array
-   */
-  private static function generateFirstLine($result) {
-    return array(
-      '"1"',
-      '"VECIVI"',
-      '"2"',
-      '"'.$result['invoice_id'].'"',
-      '"001"',
-      '""',
-      '"400000"',
-      '"'.$result['contact_id'].'"',
-      '""',
-      '""',
-      '"'.$result['receive_date'].'"',
-      '"'.$result['receive_date'].'"',
-      '"'.$result['due_date'].'"',
-      '"'.$result['membership_type'].'"',
-      '""',
-      '""',
-      '"'.$result['formatted_amount'].'"',
-      '"'.$result['formatted_amount'].'"',
-      '""',
-      '""',
-      '""',
-      '""',
-      '"0"',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-    );
-  }
-
-  /**
-   * Method to generate second line
-   *
-   * @param $result
-   * @return array
-   */
-  private static function generateSecondLine($result) {
-    return array(
-      '"3"',
-      '"VECIVI"',
-      '"2"',
-      '"'.$result['invoice_id'].'"',
-      '"002"',
-      '""',
-      '"'.$result['accounting_code'].'"',
-      '"'.$result['contact_id'].'"',
-      '""',
-      '""',
-      '"'.$result['receive_date'].'"',
-      '"'.$result['receive_date'].'"',
-      '"'.$result['due_date'].'"',
-      '"'.$result['membership_type'].'"',
-      '""',
-      '""',
-      '"-'.$result['formatted_amount'].'"',
-      '"0,000"',
-      '""',
-      '""',
-      '""',
-      '""',
-      '"0"',
-      '"244600"',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-    );
-  }
-
-  /**
-   * Method to generate third line
-   *
-   * @param $result
-   * @return array
-   */
-  private static function generateThirdLine($result) {
-    return array(
-      '"4"',
-      '"VECIVI"',
-      '"2"',
-      '"'.$result['invoice_id'].'"',
-      '"VAT"',
-      '"FIXED"',
-      '""',
-      '"'.$result['contact_id'].'"',
-      '""',
-      '""',
-      '"'.$result['receive_date'].'"',
-      '"'.$result['receive_date'].'"',
-      '"'.$result['due_date'].'"',
-      '"'.$result['membership_type'].'"',
-      '""',
-      '""',
-      '"0,000"',
-      '"'.$result['formatted_amount'].'"',
-      '"244600"',
-      '""',
-      '""',
-      '""',
-      '"0"',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-      '""',
-    );
   }
 
 }

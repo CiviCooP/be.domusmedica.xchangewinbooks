@@ -67,10 +67,16 @@ class CRM_Xchangewinbooks_Form_Settings extends CRM_Core_Form {
    */
   private function buildGenericElements() {
     foreach ($this->_data as $key => $value) {
-      if ($key != 'Velden tussen quotes') {
-        $this->add('text', $key, ts($key),array(), true);
+      $parts = explode('_', $key);
+      if (isset($parts[1])) {
+        $label = implode(' ', $parts);
       } else {
-        $this->addYesNo($key, ts($key), false, false);
+        $label = $key;
+      }
+      if ($key != 'Velden_tussen_quotes') {
+        $this->add('text', $key, ts($label),array(), true);
+      } else {
+        $this->addYesNo($key, ts($label), false, false);
       }
     }
   }

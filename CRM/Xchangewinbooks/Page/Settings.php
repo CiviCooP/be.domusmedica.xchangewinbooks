@@ -68,6 +68,10 @@ class CRM_Xchangewinbooks_Page_Settings extends CRM_Core_Page {
   private function setOneLine($type, $data) {
     $lines = array();
     foreach ($data as $key => $value) {
+      $parts = explode('_', $key);
+      if (isset($parts[1])) {
+        $key = implode(' ', $parts);
+      }
       $lines[] = $key . ": <strong>" . $value."</strong>";
     }
     $editUrl = CRM_Utils_System::url('civicrm/domusmedica/xchangewinbooks/form/settings',

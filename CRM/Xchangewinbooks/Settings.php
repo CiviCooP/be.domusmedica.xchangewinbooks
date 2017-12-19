@@ -146,4 +146,56 @@ class CRM_Xchangewinbooks_Settings {
         . $ex->getMessage());
     }
   }
+
+  /**
+   * Method to get the between quotes generic setting
+   *
+   * @return int|mixed
+   */
+  public function getQuotes() {
+    if (isset($this->_generic['Velden_tussen_quotes'])) {
+      return $this->_generic['Velden_tussen_quotes'];
+    } else {
+      return 0;
+    }
+  }
+
+  /**
+   * Method to get the decimal places setting
+   *
+   * @return int|mixed
+   */
+  public function getDecimalPlaces() {
+    if (isset($this->_generic['Cijfers_achter_de_komma'])) {
+      return $this->_generic['Cijfers_achter_de_komma'];
+    } else {
+      return 0;
+    }
+  }
+
+  /**
+   * Method to get the credit analytic code setting
+   *
+   * @return int|mixed
+   */
+  public function getAnalyticCodeCredit() {
+    if (isset($this->_generic['Analystische_code_Creditnota'])) {
+      return $this->_generic['Analystische_code_Creditnota'];
+    } else {
+      return 0;
+    }
+  }
+
+  /**
+   * Method to get the factuu analytic code setting
+   *
+   * @return int|mixed
+   */
+  public function getAnalyticCodeFactuur() {
+    if (isset($this->_generic['Analytische_code_Factuur'])) {
+      return $this->_generic['Analytische_code_Factuur'];
+    } else {
+      return 0;
+    }
+  }
 }
