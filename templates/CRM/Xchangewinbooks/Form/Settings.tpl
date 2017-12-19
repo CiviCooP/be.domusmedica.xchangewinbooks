@@ -1,105 +1,58 @@
 {* HEADER *}
 
 <div class="crm-block crm-form-block">
+  {if $settings_type != "gen"}
+    <div id="help">
+      {ts}Je kunt hier alle instellingen wijzigen in vaste tekst.<br />
+        LET OP! In sommige instellingen staat <strong>column:</strong> met daarachter de naam van een kolom. Dit betekent dat er een veld uit CiviCRM gebruikt wordt om de instelling te vullen. Als je wilt kun je dit wijzigen in vaste tekst, maar je moet wel zeker weten dat het klopt!
+      {/ts}
+    </div>
+  {/if}
   <div class="crm-submit-buttons">
   {include file="CRM/common/formButtons.tpl" location="top"}
   </div>
 
-  <h2>{ts}Verkoopfacturen - Grootboekniveau{/ts}</h2>
-  {foreach from=$form.vf_gn key=line_number item=element}
-    <h3>{$line_number} regel</h3>
-    {foreach from=$element key=field_name item=field_value}
-      {assign var{$var|substr:0:30}
+  {if $settings_type == "fgn" or $settings_type == "cgn"}
+    <h3>{ts}Eerste regel{/ts}</h3>
+    {foreach from=$elementNames item=elementName}
+      {if $elementName|substr:0:7 eq 'eerste_'}
+        <div class="crm-section">
+          <div class="label">{$form.$elementName.label}</div>
+          <div class="content">{$form.$elementName.html}</div>
+          <div class="clear"></div>
+        </div>
+      {/if}
     {/foreach}
-  {/foreach}
+    <h3>{ts}Tweede regel{/ts}</h3>
+    {foreach from=$elementNames item=elementName}
+      {if $elementName|substr:0:7 eq 'tweede_'}
+        <div class="crm-section">
+          <div class="label">{$form.$elementName.label}</div>
+          <div class="content">{$form.$elementName.html}</div>
+          <div class="clear"></div>
+        </div>
+      {/if}
+    {/foreach}
+    <h3>{ts}Derde regel{/ts}</h3>
+    {foreach from=$elementNames item=elementName}
+      {if $elementName|substr:0:6 eq 'derde_'}
+        <div class="crm-section">
+          <div class="label">{$form.$elementName.label}</div>
+          <div class="content">{$form.$elementName.html}</div>
+          <div class="clear"></div>
+        </div>
+      {/if}
+    {/foreach}
 
-
-  <h3>{ts}Eerste regel{/ts}</h3>
-  <div class="crm-section">
-    <div class="label">{$form.vf_gn_eerste_regelnummer.label}</div>
-    <div class="content">{$form.vf_gn_eerste_regelnummer.html}</div>
-    <div class="clear"></div>
-  </div>
-  <div class="crm-section">
-    <div class="label">{$form.vf_gn_eerste_dagboek.label}</div>
-    <div class="content">{$form.vf_gn_eerste_dagboek.html}</div>
-    <div class="clear"></div>
-  </div>
-  <div class="crm-section">
-    <div class="label">{$form.vf_gn_eerste_dagboek_code.label}</div>
-    <div class="content">{$form.vf_gn_eerste_dagboek_code.html}</div>
-    <div class="clear"></div>
-  </div>
-
-
-  <h3>{ts}Tweede regel{/ts}</h3>
-  <div class="crm-section">
-    <div class="label">{$form.vf_gn_tweede_regelnummer.label}</div>
-    <div class="content">{$form.vf_gn_tweede_regelnummer.html}</div>
-    <div class="clear"></div>
-  </div>
-  <div class="crm-section">
-    <div class="label">{$form.vf_gn_tweede_dagboek.label}</div>
-    <div class="content">{$form.vf_gn_tweede_dagboek.html}</div>
-    <div class="clear"></div>
-  </div>
-  <div class="crm-section">
-    <div class="label">{$form.vf_gn_tweede_dagboek_code.label}</div>
-    <div class="content">{$form.vf_gn_tweede_dagboek_code.html}</div>
-    <div class="clear"></div>
-  </div>
-
-  <h3>{ts}Derde regel{/ts}</h3>
-  <table>
-    <thead>
-    <tr>
-      <th>Regelnummer</th>
-      <th>Dagboek</th>
-      <th>Dagboek Code</th>
-    </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="content">{$form.vf_gn_derde_regelnummer.html}</td>
-        <td class="content">{$form.vf_gn_derde_dagboek.html}</td>
-        <td class="content">{$form.vf_gn_derde_dagboek_code.html}</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h2>{ts}Verkoopfacturen - Analytisch niveau{/ts}</h2>
-  <div class="crm-section">
-    <div class="label">{$form.regelnummer.label}</div>
-    <div class="content">{$form.regelnummer.html}</div>
-    <div class="clear"></div>
-  </div>
-
-  <h2>{ts}Creditnota's - Grootboekniveau{/ts}</h2>
-  <h3>{ts}Eerste regel{/ts}</h3>
-  <div class="crm-section">
-    <div class="label">{$form.regelnummer.label}</div>
-    <div class="content">{$form.regelnummer.html}</div>
-    <div class="clear"></div>
-  </div>
-  <h3>{ts}Tweede regel{/ts}</h3>
-  <div class="crm-section">
-    <div class="label">{$form.regelnummer.label}</div>
-    <div class="content">{$form.regelnummer.html}</div>
-    <div class="clear"></div>
-  </div>
-  <h3>{ts}Derde regel{/ts}</h3>
-  <div class="crm-section">
-    <div class="label">{$form.regelnummer.label}</div>
-    <div class="content">{$form.regelnummer.html}</div>
-    <div class="clear"></div>
-  </div>
-  <h2>{ts}Creditnota's - Analytisch niveau{/ts}</h2>
-  <div class="crm-section">
-    <div class="label">{$form.regelnummer.label}</div>
-    <div class="content">{$form.regelnummer.html}</div>
-    <div class="clear"></div>
-  </div>
-
+  {else}
+    {foreach from=$elementNames item=elementName}
+      <div class="crm-section">
+        <div class="label">{$form.$elementName.label}</div>
+        <div class="content">{$form.$elementName.html}</div>
+        <div class="clear"></div>
+      </div>
+    {/foreach}
+  {/if}
 
   {* FOOTER *}
   <div class="crm-submit-buttons">

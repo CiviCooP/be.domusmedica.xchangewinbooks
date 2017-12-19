@@ -22,6 +22,42 @@ function xchangewinbooks_civicrm_batchItems(&$results, &$items) {
 }
 
 /**
+ * Implements hook_civicrm_navigationMenu
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu/
+ */
+function xchangewinbooks_civicrm_navigationMenu(&$menu) {
+  // Check that our item doesn't already exist
+  $menuItemSearch = array('url' => 'civicrm/domusmedica/xchangewinbooks/page/settings');
+  $menuItems = array();
+  CRM_Core_BAO_Navigation::retrieve($menuItemSearch, $menuItems);
+
+  if ( ! empty($menuItems) ) {
+    return;
+  }
+
+  $navId = CRM_Core_DAO::singleValueQuery("SELECT max(id) FROM civicrm_navigation");
+  if (is_integer($navId)) {
+    $navId++;
+  }
+  // Find the Administer menu
+  $administerId = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Navigation', 'Administer', 'id', 'name');
+  $params[$administerId]['child'][$navId] = array(
+    'attributes' => array (
+      'label' => ts('Export to Winbooks Settings',array('domain' => 'be.domusmedica.xchangewinbooks')),
+      'name' => 'Export to Winbooks Settings',
+      'url' => 'civicrm/domusmedica/xchangewinbooks/page/settings',
+      'permission' => 'access CiviCRM, administer CiviCRM',
+      'operator' => 'AND',
+      'separator' => 1,
+      'parentID' => $administerId,
+      'navID' => $navId,
+      'active' => 1
+    ),
+  );
+}
+
+/**
  * Implements hook_civicrm_config().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config

@@ -15,6 +15,11 @@ class CRM_Xchangewinbooks_Settings {
   private $_factuurAnalytisch = array();
   private $_creditGrootboek = array();
   private $_creditAnalytisch = array();
+  private $_genJsonFileName = NULL;
+  private $_fgnJsonFileName = NULL;
+  private $_fanJsonFileName = NULL;
+  private $_cgnJsonFileName = NULL;
+  private $_canJsonFileName = NULL;
 
   /**
    * CRM_Xchangewinbooks_Settings constructor.
@@ -28,6 +33,11 @@ class CRM_Xchangewinbooks_Settings {
         . '.It does not exist or is not a folder, contact your system administrator'));
     }
     $this->_settingsPath = $settingsPath;
+    $this->_fgnJsonFileName = 'pattern_factuur_grootboek';
+    $this->_fanJsonFileName = 'pattern_factuur_analytisch';
+    $this->_genJsonFileName = 'generic';
+    $this->_canJsonFileName = 'pattern_credit_analytisch';
+    $this->_cgnJsonFileName = 'pattern_credit_grootboek';
     $this->setSettingsFromJson();
   }
 
@@ -40,6 +50,20 @@ class CRM_Xchangewinbooks_Settings {
     return $this->_generic;
   }
 
+  /**
+   * Method to get the json file name based on type
+   *
+   * @param $type
+   * @return null
+   */
+  public function getJsonFileName($type) {
+    $property = "_".$type.'JsonFileName';
+    if (isset($this->$property)) {
+      return $this->$property;
+    } else {
+      return NULL;
+    }
+  }
   /**
    * Getter for verkoopfactuur grootboek niveau settings
    *
@@ -81,11 +105,11 @@ class CRM_Xchangewinbooks_Settings {
    */
   private function setSettingsFromJson() {
     $settings = array(
-      '_generic' => 'generic',
-      '_factuurGrootboek' => 'pattern_factuur_grootboek',
-      '_factuurAnalytisch' => 'pattern_factuur_analytisch',
-      '_creditGrootboek' => 'pattern_credit_grootboek',
-      '_creditAnalytisch' => 'pattern_credit_analytisch',
+      '_generic' => $this->_genJsonFileName,
+      '_factuurGrootboek' => $this->_fgnJsonFileName,
+      '_factuurAnalytisch' => $this->_fanJsonFileName,
+      '_creditGrootboek' => $this->_cgnJsonFileName,
+      '_creditAnalytisch' => $this->_canJsonFileName,
     );
     foreach ($settings as $property => $fileName) {
       $jsonFile = $this->_settingsPath.$fileName.'.json';

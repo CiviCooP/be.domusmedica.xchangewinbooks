@@ -1,192 +1,192 @@
 {
-  "Regelnummer":{
-    "eerste":"1",
-    "tweede":"3",
-    "derde":"4"
-  },
-  "Dagboek":{
-    "eerste":"VECIVI",
-    "tweede":"VECIVI",
-    "derde":"VECIVI"
-  },
-  "Dagboekcode":{
-    "eerste":"2",
-    "tweede":"2",
-    "derde":"2"
-  },
-  "Factuurnummer":{
-    "eerste":"column:invoice_id",
-    "tweede":"column:invoice_id",
-    "derde":"column:invoice_id"
-  },
-  "5e veld":{
-    "eerste":"1",
-    "tweede":"2",
-    "derde":"VAT"
-  },
-  "6e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":"FIXED"
-  },
-  "Grootboekrekening":{
-    "eerste":"400000",
-    "tweede":"column:accounting_code",
-    "derde":""
-  },
-  "Klantnummer":{
-    "eerste":"column:contact_id",
-    "tweede":"column:contact_id",
-    "derde":"column:contact_id"
-  },
-  "9e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "10e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "Factuurdatum":{
-    "eerste":"column:invoice_date",
-    "tweede":"column:invoice_date",
-    "derde":"column:invoice_date"
-  },
-  "Tweede factuurdatum":{
-    "eerste":"column:invoice_date",
-    "tweede":"column:invoice_date",
-    "derde":"column:invoice_date"
-  },
-  "Vervaldatum":{
-    "eerste":"column:due_date",
-    "tweede":"column:due_date",
-    "derde":"column:due_date"
-  },
-  "Omschrijving":{
-    "eerste":"column:description",
-    "tweede":"column:description",
-    "derde":"column:description"
-  },
-  "15e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "16e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "Bedrag":{
-    "eerste":"column:total_amount",
-    "tweede":"column:total_amount:negative",
-    "derde":"0,000"
-  },
-  "Tweede Bedrag":{
-    "eerste":"column:total_amount",
-    "tweede":"0,000",
-    "derde":"column:net_amount"
-  },
-  "BTW code":{
-    "eerste":"",
-    "tweede":"",
-    "derde":"244600"
-  },
-  "20e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "21e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "22e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "23e veld":{
-    "eerste":"0",
-    "tweede":"0",
-    "derde":"0"
-  },
-  "Tweede BTW code":{
-    "eerste":"",
-    "tweede":"244600",
-    "derde":""
-  },
-  "25e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "26e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "27e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "28e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "29e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "30e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "31e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "32e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "33e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "34e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "35e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "36e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "37e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  },
-  "38e veld":{
-    "eerste":"",
-    "tweede":"",
-    "derde":""
-  }
+    "Regelnummer": {
+        "eerste": "1",
+        "tweede": "3",
+        "derde": "4"
+    },
+    "Dagboek": {
+        "eerste": "VECIVI",
+        "tweede": "VECIVI",
+        "derde": "VECIVI"
+    },
+    "Dagboekcode": {
+        "eerste": "2",
+        "tweede": "2",
+        "derde": "2"
+    },
+    "Factuurnummer": {
+        "eerste": "column:invoice_id",
+        "tweede": "column:invoice_id",
+        "derde": "column:invoice_id"
+    },
+    "5e veld": {
+        "eerste": null,
+        "tweede": null,
+        "derde": null
+    },
+    "6e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": null
+    },
+    "Grootboekrekening": {
+        "eerste": "400000",
+        "tweede": "column:accounting_code",
+        "derde": ""
+    },
+    "Klantnummer": {
+        "eerste": "column:contact_id",
+        "tweede": "column:contact_id",
+        "derde": "column:contact_id"
+    },
+    "9e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "10e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "Factuurdatum": {
+        "eerste": "column:invoice_date",
+        "tweede": "column:invoice_date",
+        "derde": "column:invoice_date"
+    },
+    "2e Factuurdatum": {
+        "eerste": null,
+        "tweede": null,
+        "derde": null
+    },
+    "Vervaldatum": {
+        "eerste": "column:due_date",
+        "tweede": "column:due_date",
+        "derde": "column:due_date"
+    },
+    "Omschrijving": {
+        "eerste": "column:description",
+        "tweede": "column:description",
+        "derde": "column:description"
+    },
+    "15e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "16e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "Bedrag": {
+        "eerste": "column:total_amount",
+        "tweede": "column:total_amount:negative",
+        "derde": "0,000"
+    },
+    "2e Bedrag": {
+        "eerste": null,
+        "tweede": null,
+        "derde": null
+    },
+    "BTW code": {
+        "eerste": "",
+        "tweede": "",
+        "derde": null
+    },
+    "20e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "21e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "22e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "23e veld": {
+        "eerste": null,
+        "tweede": null,
+        "derde": null
+    },
+    "2e BTW code": {
+        "eerste": "",
+        "tweede": null,
+        "derde": ""
+    },
+    "25e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "26e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "27e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "28e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "29e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "30e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "31e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "32e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "33e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "34e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "35e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "36e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "37e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    },
+    "38e veld": {
+        "eerste": "",
+        "tweede": "",
+        "derde": ""
+    }
 }
