@@ -20,14 +20,14 @@
         "derde": "column:invoice_id"
     },
     "5e veld": {
-        "eerste": null,
-        "tweede": null,
-        "derde": null
+        "eerste": "1",
+        "tweede": "2",
+        "derde": "VAT"
     },
     "6e veld": {
         "eerste": "",
         "tweede": "",
-        "derde": null
+        "derde": "FIXED"
     },
     "Grootboekrekening": {
         "eerste": "400000",
@@ -55,9 +55,9 @@
         "derde": "column:invoice_date"
     },
     "2e Factuurdatum": {
-        "eerste": null,
-        "tweede": null,
-        "derde": null
+        "eerste": "column:invoice_date",
+        "tweede": "column:invoice_date",
+        "derde": "column:invoice_date"
     },
     "Vervaldatum": {
         "eerste": "column:due_date",
@@ -85,14 +85,14 @@
         "derde": "0,000"
     },
     "2e Bedrag": {
-        "eerste": null,
-        "tweede": null,
-        "derde": null
+        "eerste": "column:total_amount",
+        "tweede": "0,000",
+        "derde": "column:total_amount"
     },
     "BTW code": {
         "eerste": "",
         "tweede": "",
-        "derde": null
+        "derde": "244600"
     },
     "20e veld": {
         "eerste": "",
@@ -110,13 +110,13 @@
         "derde": ""
     },
     "23e veld": {
-        "eerste": null,
-        "tweede": null,
-        "derde": null
+        "eerste": "0",
+        "tweede": "0",
+        "derde": "0"
     },
     "2e BTW code": {
         "eerste": "",
-        "tweede": null,
+        "tweede": "244600",
         "derde": ""
     },
     "25e veld": {

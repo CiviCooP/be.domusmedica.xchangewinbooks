@@ -16,7 +16,7 @@ class CRM_Xchangewinbooks_Export
    */
   public static function batchQuery(&$query) {
     $query = "SELECT DISTINCT(d.invoice_id), d.creditnote_id, d.total_amount, d.net_amount, d.financial_type_id, d.receive_date, 
-d.contact_id, g.name as membership_type, i.accounting_code
+d.contact_id, g.name as description, i.accounting_code
 
 FROM civicrm_entity_batch a
 JOIN civicrm_financial_trxn b ON a.entity_id = b.id
@@ -69,15 +69,13 @@ WHERE a.batch_id = %1 AND a.entity_table = 'civicrm_financial_trxn' AND d.invoic
       $pattern = $settings->getFactuurGrootboek();
     }
     $quotes = $settings->getQuotes();
-    $anaCredit = $settings->getAnalyticCodeCredit();
-    $anaFactuur = $settings->getAnalyticCodeFactuur();
     $eerste = array();
     $tweede = array();
     $derde = array();
     foreach ($pattern as $key => $values) {
-      $eerste[$key] = self::writeGrootboekValue($values['eerste'], $data, $quotes, $anaCredit, $anaFactuur);
-      $tweede[$key] = self::writeGrootboekValue($values['tweede'],  $data, $quotes, $anaCredit, $anaFactuur);
-      $derde[$key] = self::writeGrootboekValue($values['derde'],  $data, $quotes, $anaCredit, $anaFactuur);
+      $eerste[$key] = self::writeGrootboekValue($values['eerste'], $data, $quotes);
+      $tweede[$key] = self::writeGrootboekValue($values['tweede'],  $data, $quotes);
+      $derde[$key] = self::writeGrootboekValue($values['derde'],  $data, $quotes);
     }
     $items[] = $eerste;
     $items[] = $tweede;
@@ -90,15 +88,13 @@ WHERE a.batch_id = %1 AND a.entity_table = 'civicrm_financial_trxn' AND d.invoic
    * @param $value
    * @param array $data
    * @param bool $quotes
-   * @param string $anaCredit
-   * @param string $anaFactuur
    * @return string
    */
-  private static function writeGrootboekValue($value, $data, $quotes, $anaCredit, $anaFactuur) {
+  private static function writeGrootboekValue($value, $data, $quotes) {
     if (empty($value)) {
       $result = '';
     } elseif (substr($value, 0, 7) == 'column:') {
-      $result = self::retrieveColumnValue($value, $data, $anaCredit, $anaFactuur);
+      $result = self::retrieveColumnValue($value, $data);
     } else {
       $result = $value;
     }
@@ -114,11 +110,9 @@ WHERE a.batch_id = %1 AND a.entity_table = 'civicrm_financial_trxn' AND d.invoic
    *
    * @param $value
    * @param $data
-   * @param $anaCredit
-   * @param $anaFactuur
    * @return false|string
    */
-  private static function retrieveColumnValue($value, $data, $anaCredit, $anaFactuur) {
+  private static function retrieveColumnValue($value, $data) {
     $result = '';
     $parts = explode('column:', $value);
     if (isset($parts[1])) {
@@ -133,10 +127,12 @@ WHERE a.batch_id = %1 AND a.entity_table = 'civicrm_financial_trxn' AND d.invoic
           $result = '-'.$data['formatted_amount'];
           break;
         case 'analytic_code_factuur':
-          $result = $anaFactuur;
+          $settings = new CRM_Xchangewinbooks_Settings();
+          $result = $settings->getAnalyticCodeFactuur();
           break;
         case 'analytic_code_credit':
-          $result = $anaCredit;
+          $settings = new CRM_Xchangewinbooks_Settings();
+          $result = $settings->getAnalyticCodeCredit();
           break;
         default:
           if (isset($data[$parts[1]])) {
@@ -147,8 +143,28 @@ WHERE a.batch_id = %1 AND a.entity_table = 'civicrm_financial_trxn' AND d.invoic
     }
     return $result;
   }
-  private static function generateAnalytischLine($type, &$items) {
 
+  /**
+   * Method to write the analytisch line
+   *
+   * @param $type
+   * @param $items
+   * @param $data
+   */
+  private static function generateAnalytischLine($type, &$items, $data) {
+    $settings = new CRM_Xchangewinbooks_Settings();
+    $data['formatted_amount'] = number_format($data['total_amount'], $settings->getDecimalPlaces() , ',', '.');
+    if ($type == 'credit') {
+      $pattern = $settings->getCreditAnalytisch();
+    } else {
+      $pattern = $settings->getFactuurAnalytisch();
+    }
+    $quotes = $settings->getQuotes();
+    $line = array();
+    foreach ($pattern as $key => $values) {
+      $line[$key] = self::writeGrootboekValue($values, $data, $quotes);
+    }
+    $items[] = $line;
   }
 
   /**
@@ -180,7 +196,7 @@ WHERE a.batch_id = %1 AND a.entity_table = 'civicrm_financial_trxn' AND d.invoic
     }
     catch (CiviCRM_API3_Exception $ex) {
     }
-    return $dueDate->format('Y-m-d H:i:s');
+    return $dueDate->format('Ymd');
   }
 
 }
