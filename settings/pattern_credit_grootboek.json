@@ -50,14 +50,14 @@
         "derde": ""
     },
     "Factuurdatum": {
-        "eerste": "column:invoice_date",
-        "tweede": "column:invoice_date",
-        "derde": "column:invoice_date"
+        "eerste": "column:credit_date",
+        "tweede": "column:credit_date",
+        "derde": "column:credit_date"
     },
     "2e Factuurdatum": {
-        "eerste": "column:invoice_date",
-        "tweede": "column:invoice_date",
-        "derde": "column:invoice_date"
+        "eerste": "column:credit_date",
+        "tweede": "column:credit_date",
+        "derde": "column:credit_date"
     },
     "Vervaldatum": {
         "eerste": "column:due_date",

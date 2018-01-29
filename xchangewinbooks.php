@@ -9,7 +9,7 @@ use CRM_Xchangewinbooks_ExtensionUtil as E;
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_batchQuery/
  */
 function xchangewinbooks_civicrm_batchQuery(&$query) {
-  CRM_Xchangewinbooks_Export::batchQuery($query);
+  //CRM_Xchangewinbooks_Export::batchQuery($query);
 }
 
 /**

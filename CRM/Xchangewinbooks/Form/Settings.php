@@ -20,26 +20,25 @@ class CRM_Xchangewinbooks_Form_Settings extends CRM_Core_Form {
     // todo validate scheidingsteken en achter de komma
     $this->assign('settings_type', $this->_type);
     $this->add('hidden', 'settings_type');
-    $xchangeSettings = new CRM_Xchangewinbooks_Settings();
     switch ($this->_type) {
       case 'gen':
-        $this->_data = $xchangeSettings->getGeneric();
+        $this->_data = CRM_Xchangewinbooks_Settings::singleton()->getGeneric();
         $this->buildGenericElements();
         break;
       case 'fgn':
-        $this->_data = $xchangeSettings->getFactuurGrootboek();
+        $this->_data = CRM_Xchangewinbooks_Settings::singleton()->getFactuurGrootboek();
         $this->buildGrootboekElements();
         break;
       case 'fan':
-        $this->_data = $xchangeSettings->getFactuurAnalytisch();
+        $this->_data = CRM_Xchangewinbooks_Settings::singleton()->getFactuurAnalytisch();
         $this->buildAnalytischElements();
         break;
       case 'cgn':
-        $this->_data = $xchangeSettings->getCreditGrootboek();
+        $this->_data = CRM_Xchangewinbooks_Settings::singleton()->getCreditGrootboek();
         $this->buildGrootboekElements();
         break;
       case 'can':
-        $this->_data = $xchangeSettings->getCreditAnalytisch();
+        $this->_data = CRM_Xchangewinbooks_Settings::singleton()->getCreditAnalytisch();
         $this->buildAnalytischElements();
         break;
     }
@@ -204,11 +203,10 @@ class CRM_Xchangewinbooks_Form_Settings extends CRM_Core_Form {
    * @throws Exception
    */
   private function saveTripleLine() {
-    $settings = new CRM_Xchangewinbooks_Settings();
     if ($this->_submitValues['settings_type'] == 'cgn') {
-      $data = $settings->getCreditGrootboek();
+      $data = CRM_Xchangewinbooks_Settings::singleton()->getCreditGrootboek();
     } else {
-      $data = $settings->getFactuurGrootboek();
+      $data = CRM_Xchangewinbooks_Settings::singleton()->getFactuurGrootboek();
     }
     foreach ($data as $key => $value) {
       $parts = explode(' ', $key);
@@ -231,8 +229,8 @@ class CRM_Xchangewinbooks_Form_Settings extends CRM_Core_Form {
         }
       }
     }
-    $fileName = $settings->getJsonFileName($this->_submitValues['settings_type']);
-    $settings->save($fileName, $data);
+    $fileName = CRM_Xchangewinbooks_Settings::singleton()->getJsonFileName($this->_submitValues['settings_type']);
+    CRM_Xchangewinbooks_Settings::singleton()->save($fileName, $data);
   }
 
   /**
@@ -241,9 +239,8 @@ class CRM_Xchangewinbooks_Form_Settings extends CRM_Core_Form {
    * @throws Exception
    */
   private function saveSingleLine() {
-    $settings = new CRM_Xchangewinbooks_Settings();
-    $fileName = $settings->getJsonFileName($this->_submitValues['settings_type']);
-    $settings->save($fileName, $this->getSaveList());
+    $fileName = CRM_Xchangewinbooks_Settings::singleton()->getJsonFileName($this->_submitValues['settings_type']);
+    CRM_Xchangewinbooks_Settings::singleton()->save($fileName, $this->getSaveList());
   }
 
   /**

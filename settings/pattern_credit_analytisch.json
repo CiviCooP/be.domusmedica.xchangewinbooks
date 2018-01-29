@@ -5,7 +5,7 @@
     "4e_veld": "",
     "5e_veld": "",
     "Grootboekrekening": "column:accounting_code",
-    "Factuurdatum": "column:invoice_date",
+    "Factuurdatum": "column:credit_date",
     "Omschrijving": "column:description",
     "9e_veld": "",
     "Bedrag": "column:total_amount",

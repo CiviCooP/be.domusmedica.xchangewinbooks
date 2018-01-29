@@ -7,16 +7,16 @@
  * @license AGPL-3.0
  */
 
-class CRM_Xchangewinbooks_Export
-{
+class CRM_Xchangewinbooks_Export {
   /**
-   * Method to process the CiviCRM batchQuery hook to change the query
+   * Method to get the alternative data for the batch
    *
-   * @param $query
+   * @param int $batchId
+   * @return object|bool
    */
-  public static function batchQuery(&$query) {
-    $query = "SELECT DISTINCT(d.invoice_id), d.creditnote_id, d.total_amount, d.net_amount, d.financial_type_id, d.receive_date, 
-d.contact_id, g.name as description, i.accounting_code
+  private static function alternativeBatchItems($batchId) {
+    $query = "SELECT DISTINCT(d.invoice_id), d.creditnote_id, d.total_amount, d.net_amount, d.financial_type_id, 
+d.receive_date, d.cancel_date, d.contact_id, g.name as description, i.accounting_code, d.id as contribution_id
 
 FROM civicrm_entity_batch a
 JOIN civicrm_financial_trxn b ON a.entity_id = b.id
@@ -30,8 +30,32 @@ LEFT JOIN civicrm_entity_financial_account h ON h.entity_id = d.financial_type_i
 LEFT JOIN civicrm_financial_account i ON h.financial_account_id = i.id
 
 WHERE a.batch_id = %1 AND a.entity_table = 'civicrm_financial_trxn' AND d.invoice_id IS NOT NULL";
+    try {
+      $dao = CRM_Core_DAO::executeQuery($query, array(
+        1 => array($batchId, 'Integer'),
+      ));
+      return $dao;
+    }
+    catch (Exception $ex) {
+      CRM_Core_Error::debug_log_message('Could not fetch alternative batch data (extension be.domusmedica.xchangewinbooks)');
+      return FALSE;
+    }
   }
 
+  /**
+   * Method to retrieve batchId from results of batchItems hook
+   *
+   * @param $data
+   * @return bool
+   */
+  private static function retrieveBatchId($data) {
+    foreach ($data as $key => $values) {
+      if ($values['batch_id']) {
+        return $values['batch_id'];
+      }
+    }
+    return FALSE;
+  }
   /**
    * Method to process the CiviCRM batchItems hook to generate new items
    *
@@ -39,18 +63,54 @@ WHERE a.batch_id = %1 AND a.entity_table = 'civicrm_financial_trxn' AND d.invoic
    * @param $items
    */
   public static function batchItems(&$results, &$items) {
-    $items = array();
-    foreach ($results as $result) {
-      $result['due_date'] = self::calculateDueDate($result['receive_date']);
-      // decide if this is a verkoopfactuur or a creditnota
-      if (!empty($result['creditnote_id'])) {
-        self::generateGrootboekLines('credit', $items, $result);
-        self::generateAnalytischLine('credit', $items, $result);
-      } else {
-        self::generateGrootboekLines('factuur', $items, $result);
-        self::generateAnalytischLine('factuur', $items, $result);
+    // retrieve alternative data
+    $batchId = self::retrieveBatchId($results);
+    if ($batchId) {
+      $alternative = self::alternativeBatchItems($batchId);
+      if ($alternative) {
+        $items = array();
+        while ($alternative->fetch()) {
+          // only if exportable
+          if (self::isItemExportable($alternative)) {
+            // decide if this is a verkoopfactuur or a creditnota
+            if (!empty($alternative->creditnote_id)) {
+              self::generateGrootboekLines('credit', $items, $alternative);
+              self::generateAnalytischLine('credit', $items, $alternative);
+            } else {
+              self::generateGrootboekLines('factuur', $items, $alternative);
+              self::generateAnalytischLine('factuur', $items, $alternative);
+            }
+          }
+        }
       }
     }
+  }
+
+  /**
+   * Method to determine if item can be exported. Can only happen if not exported
+   *
+   * @param $data
+   * @return bool
+   */
+  public static function isItemExportable($data) {
+    if (!empty($data->contribution_id)) {
+      if (!empty($data->creditnote_id)) {
+        $query = 'SELECT '.CRM_Xchangewinbooks_Settings::singleton()->getCreditExportedCustomField('column_name')
+          .' FROM '.CRM_Xchangewinbooks_Settings::singleton()->getContributionDataCustomGroup('table_name')
+          .' WHERE entity_id = %1';
+      } else {
+        $query = 'SELECT '.CRM_Xchangewinbooks_Settings::singleton()->getInvoiceExportedCustomField('column_name')
+          .' FROM '.CRM_Xchangewinbooks_Settings::singleton()->getContributionDataCustomGroup('table_name')
+          .' WHERE entity_id = %1';
+      }
+      $hasBeenExported = CRM_Core_DAO::singleValueQuery($query, array(
+        1 => array($data->contribution_id, 'Integer'),
+      ));
+      if ($hasBeenExported == TRUE) {
+        return FALSE;
+      }
+    }
+    return TRUE;
   }
 
   /**
@@ -62,20 +122,21 @@ WHERE a.batch_id = %1 AND a.entity_table = 'civicrm_financial_trxn' AND d.invoic
    */
   private static function generateGrootboeklines($type, &$items, $data) {
     $settings = new CRM_Xchangewinbooks_Settings();
-    $data['formatted_amount'] = number_format($data['total_amount'], $settings->getDecimalPlaces() , ',', '.');
+    $data->formatted_amount = number_format($data->total_amount, $settings->getDecimalPlaces() , ',', '.');
     if ($type == 'credit') {
       $pattern = $settings->getCreditGrootboek();
+      $data->due_date = self::calculateDueDate($data->cancel_date);
     } else {
       $pattern = $settings->getFactuurGrootboek();
+      $data->due_date = self::calculateDueDate($data->receive_date);
     }
-    $quotes = $settings->getQuotes();
     $eerste = array();
     $tweede = array();
     $derde = array();
     foreach ($pattern as $key => $values) {
-      $eerste[$key] = self::writeGrootboekValue($values['eerste'], $data, $quotes);
-      $tweede[$key] = self::writeGrootboekValue($values['tweede'],  $data, $quotes);
-      $derde[$key] = self::writeGrootboekValue($values['derde'],  $data, $quotes);
+      $eerste[$key] = self::writeValue($values['eerste'], $data);
+      $tweede[$key] = self::writeValue($values['tweede'],  $data);
+      $derde[$key] = self::writeValue($values['derde'],  $data);
     }
     $items[] = $eerste;
     $items[] = $tweede;
@@ -83,14 +144,13 @@ WHERE a.batch_id = %1 AND a.entity_table = 'civicrm_financial_trxn' AND d.invoic
   }
 
   /**
-   * Method to determine what the grootboek line value is
+   * Method to determine what the line value is
    *
    * @param $value
-   * @param array $data
-   * @param bool $quotes
+   * @param object $data
    * @return string
    */
-  private static function writeGrootboekValue($value, $data, $quotes) {
+  private static function writeValue($value, $data) {
     if (empty($value)) {
       $result = '';
     } elseif (substr($value, 0, 7) == 'column:') {
@@ -98,11 +158,7 @@ WHERE a.batch_id = %1 AND a.entity_table = 'civicrm_financial_trxn' AND d.invoic
     } else {
       $result = $value;
     }
-    if ($quotes) {
-      return '"'.$result.'"';
-    } else {
-      return $result;
-    }
+    return $result;
   }
 
   /**
@@ -118,13 +174,16 @@ WHERE a.batch_id = %1 AND a.entity_table = 'civicrm_financial_trxn' AND d.invoic
     if (isset($parts[1])) {
       switch ($parts[1]) {
         case 'invoice_date':
-          $result = date('Ymd', strtotime($data['receive_date']));
+          $result = date('Ymd', strtotime($data->receive_date));
+          break;
+        case 'credit_date':
+          $result = date('Ymd', strtotime($data->cancel_date));
           break;
         case 'total_amount':
-          $result = $data['formatted_amount'];
+          $result = $data->formatted_amount;
           break;
         case 'total_amount:negative':
-          $result = '-'.$data['formatted_amount'];
+          $result = '-'.$data->formatted_amount;
           break;
         case 'analytic_code_factuur':
           $settings = new CRM_Xchangewinbooks_Settings();
@@ -135,8 +194,9 @@ WHERE a.batch_id = %1 AND a.entity_table = 'civicrm_financial_trxn' AND d.invoic
           $result = $settings->getAnalyticCodeCredit();
           break;
         default:
-          if (isset($data[$parts[1]])) {
-            $result = $data[$parts[1]];
+          $propertyName = $parts[1];
+          if (isset($data->$propertyName)) {
+            $result = $data->$propertyName;
           }
           break;
       }
@@ -153,16 +213,15 @@ WHERE a.batch_id = %1 AND a.entity_table = 'civicrm_financial_trxn' AND d.invoic
    */
   private static function generateAnalytischLine($type, &$items, $data) {
     $settings = new CRM_Xchangewinbooks_Settings();
-    $data['formatted_amount'] = number_format($data['total_amount'], $settings->getDecimalPlaces() , ',', '.');
+    $data->formatted_amount = number_format($data->total_amount, $settings->getDecimalPlaces() , ',', '.');
     if ($type == 'credit') {
       $pattern = $settings->getCreditAnalytisch();
     } else {
       $pattern = $settings->getFactuurAnalytisch();
     }
-    $quotes = $settings->getQuotes();
     $line = array();
     foreach ($pattern as $key => $values) {
-      $line[$key] = self::writeGrootboekValue($values, $data, $quotes);
+      $line[$key] = self::writeValue($values, $data);
     }
     $items[] = $line;
   }
@@ -172,6 +231,7 @@ WHERE a.batch_id = %1 AND a.entity_table = 'civicrm_financial_trxn' AND d.invoic
    *
    * @param $invoiceDate
    * @return string
+   * @throws
    */
   private static function calculateDueDate($invoiceDate) {
     $dueDate = new DateTime($invoiceDate);
